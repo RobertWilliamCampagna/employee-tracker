@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const db = require ('./db')
+require ('console.table');
 
 
 
@@ -30,10 +31,10 @@ async function viewAllEmployees(){
 const departmentArray = []
 
 async function addDepartment(){
-    inquirer.prompt([
+    const department = await inquirer.prompt([
     {
         type: 'input',
-        name: 'departmentName',
+        name: 'name',
         message: 'Enter department name.',
         validate: answer => {
             if (answer === ''){
@@ -43,43 +44,104 @@ async function addDepartment(){
             }
         }
     },
-    {
-    type: 'input',
-    name: 'departmentId',
-    message: 'Please enter department id.',
-    validate: answer => {
-        if (answer === ''){
-            return 'Enter department name.'
-        }else{
-            return true;
-        }
-    }
-    }
-]).then(response =>{
-    const department = new department (response.departmentName, response.departmentId)
-    departmentArray.push(department)
-    addDepartment();
-    
-    startApp();
-   
-})
 
-// startApp();
+])
+   await db.addDepartment(department)
+    startApp();
 
 }
 
-// async function addRole(){
-//     const role = await db.addRole();
-//     console.log('\n');
-//     console.table(role);
-// }
+async function addRole(){
+   const departments = await db.viewAllDepartments();
 
-// async function addEmployee(){
-//     const employee = await db.addEmployee();
-//     console.log('\n');
-//     console.log(employee);
-// }
+   const departmentChoices = departments.map(({id, name}) => ({
+       name:name,
+       value: id
+   }));
 
+   const role = await inquirer.prompt([
+       {
+           type: 'input',
+           name: 'title',
+           message: 'What is the title of the role?',
+           validate: answer => {
+               if (answer === ''){
+                   return 'Enter title please.'
+               }else{
+                   return true;
+               }
+           },
+       },
+       {
+        type: 'input',
+        name: 'salary',
+        message: 'What is the salary of role?',
+        validate: answer => {
+            if (answer === ''){
+                return 'Enter salary please.'
+            }else{
+                return true;
+            }
+        },
+    },
+    {
+        type: 'list',
+        name: 'department_id',
+        message: 'What deparment does role belong to?',
+        choices: departmentChoices
+    },
+
+   ])
+   await db.addRole(role)
+   console.log("New role added.")
+   startApp();
+}
+
+async function addEmployee(){
+    const roles = await db.viewAllRoles();
+ 
+    const roleChoice = roles.map(({id, title}) => ({
+        title: title,
+        value: id
+    }));
+ 
+    const employee = await inquirer.prompt([
+        {
+            type: 'input',
+            name: 'first_name',
+            message: 'What is the name of the employee?',
+            validate: answer => {
+                if (answer === ''){
+                    return 'Enter first name please.'
+                }else{
+                    return true;
+                }
+            },
+        },
+        {
+         type: 'input',
+         name: 'last_name',
+         message: 'What is the last name of employee?',
+         validate: answer => {
+             if (answer === ''){
+                 return 'Enter last name please.'
+             }else{
+                 return true;
+             }
+         },
+     },
+     {
+         type: 'input',
+         name: 'role_id',
+         message: 'What is employees role?',
+         choices: roleChoice
+     },
+ 
+    ])
+    await db.addEmployee(employee)
+    console.log("New employee added.")
+    startApp();
+ }
 
 // startApp();
 // viewAllDepartments();
@@ -95,20 +157,19 @@ function startApp(){
     ]).then(res => {
         switch(res.navigation){
             case 'View all Departments':
-             viewAllDepartments();
-             break;
+             return viewAllDepartments();
              case 'View all Roles':
-             viewAllRoles();
+             return viewAllRoles();
              case 'View all Employees':
-             viewAllEmployees();
+             return viewAllEmployees();
              case 'Add Department':
-            addDepartment();
+            return addDepartment();
             case 'Add Role':
-            addRole();
+            return addRole();
             case 'Add Employee':
-            addEmployee();
-            case 'Update Employee Role':
-                updateRole();
+            return addEmployee();
+        //     case 'Update Employee Role':
+        //         updateRole();
         }
     })
 
@@ -117,41 +178,3 @@ function startApp(){
 
 startApp();
 
-// function viewDepartment(){
-//     inquirer.prompt([
-//         {
-//             type: 'list',
-//             name: 'Departments',
-//             message: 'What Department would you like to view?',
-//             choices: ['Accounting', 'Legal', 'Sales']
-//         }
-//     ]).then(res => {
-//         switch(res.department){
-//             case 'Accounting':
-//                 accounting();
-//                 break;
-//             case 'Legal':
-//                 legal();
-//                 break;
-//             case 'Sales':
-//                 sales();
-//                 default:
-
-//         }
-//     })
-  
-// }
-// viewAllDepartments();
-
-// function accounting(){
-//     inquirer.prompt([
-//         {
-//             type: "list",
-//             name: 'Accountants',
-//             message: 'Please select accountant.',
-//             choices: []
-//         }
-//     ])
-// }
-
-// startApp();
