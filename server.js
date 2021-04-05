@@ -101,8 +101,8 @@ async function addEmployee(){
     const roles = await db.viewAllRoles();
  
     const roleChoice = roles.map(({id, title}) => ({
-        title: title,
-        value: id
+        id: id,
+        value: title
     }));
  
     const employee = await inquirer.prompt([
@@ -131,7 +131,7 @@ async function addEmployee(){
          },
      },
      {
-         type: 'input',
+         type: 'list',
          name: 'role_id',
          message: 'What is employees role?',
          choices: roleChoice

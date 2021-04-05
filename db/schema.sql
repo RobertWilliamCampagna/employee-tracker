@@ -24,3 +24,49 @@ CREATE TABLE employee(
     manager_id INT,
     CONSTRAINT fk_manager FOREIGN KEY (manager_id) REFERENCES employee(id) ON DELETE SET NULL
 );
+
+async function addEmployee(){
+    const roles = await db.viewAllRoles();
+ 
+    const roleChoice = roles.map(({id, title}) => ({
+        title: title,
+        value: id
+    }));
+ 
+    const employee = await inquirer.prompt([
+        {
+            type: 'input',
+            name: 'first_name',
+            message: 'What is the name of the employee?',
+            validate: answer => {
+                if (answer === ''){
+                    return 'Enter first name please.'
+                }else{
+                    return true;
+                }
+            },
+        },
+        {
+         type: 'input',
+         name: 'last_name',
+         message: 'What is the last name of employee?',
+         validate: answer => {
+             if (answer === ''){
+                 return 'Enter last name please.'
+             }else{
+                 return true;
+             }
+         },
+     },
+     {
+         type: 'input',
+         name: 'role_id',
+         message: 'What is employees role?',
+         choices: roleChoice
+     },
+ 
+    ])
+    await db.addEmployee(employee)
+    console.log("New employee added.")
+    startApp();
+ }
