@@ -6,6 +6,7 @@ A inquierer based application used to add, update, delete, Employee Roles and Em
 
 ## Installation
 run npm install inquirer from the root directory of the project.
+run node server.js to run terminal application.
 ## Usage
 
 
