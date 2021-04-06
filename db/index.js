@@ -97,6 +97,20 @@ addEmployee(employee){
     )
 }
 
+updateEmployeeRole(role_id, employee_id){
+    return this.connection.query(
+        `
+        UPDATE
+            employee
+        SET
+            role_id = ?
+        WHERE
+            id = ?
+        `, [role_id, employee_id]
+    )
 }
+
+}
+
 
 module.exports = new DB(connection);

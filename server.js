@@ -101,8 +101,15 @@ async function addEmployee(){
     const roles = await db.viewAllRoles();
  
     const roleChoice = roles.map(({id, title}) => ({
-        id: id,
-        value: title
+        name: title,
+        value: id
+    }));
+
+    const managers = await db.viewAllEmployees();
+
+    const managerChoice = managers.map(({id, first_name, last_name}) =>({
+        name: `${first_name} ${last_name}`,
+        value: id
     }));
  
     const employee = await inquirer.prompt([
@@ -136,11 +143,55 @@ async function addEmployee(){
          message: 'What is employees role?',
          choices: roleChoice
      },
+     {
+        type: 'list',
+        name: 'manager_id',
+        message: 'What is employees Manager id?',
+        choices: managerChoice
+    },
  
     ])
     await db.addEmployee(employee)
     console.log("New employee added.")
     startApp();
+ }
+
+ async function updateEmployeeRole(){
+    const roles = await db.viewAllRoles();
+ 
+    const roleChoice = roles.map(({id, title}) => ({
+        name: title,
+        value: id
+    }));
+
+    const employees = await db.viewAllEmployees();
+
+    const employeeChoice = employees.map(({id, first_name, last_name}) =>({
+        name: `${first_name} ${last_name}`,
+        value: id
+    }));
+
+    const {employee_id} = await inquirer.prompt([
+        {
+            type: 'list',
+            name: 'employee_id',
+            message: "Which employee's role would you like to update?",
+            choices: employeeChoice
+        }
+    ])
+
+    const {role_id} = await inquirer.prompt([
+        {
+            type: 'list',
+            name: 'role_id',
+            message: "What is the employees new role?",
+            choices: roleChoice
+        }
+    ])
+    await db.updateEmployeeRole(role_id, employee_id)
+    console.log("Employee role is now updated.")
+    startApp();
+
  }
 
 // startApp();
@@ -168,8 +219,8 @@ function startApp(){
             return addRole();
             case 'Add Employee':
             return addEmployee();
-        //     case 'Update Employee Role':
-        //         updateRole();
+            case 'Update Employee Role':
+            return updateEmployeeRole();
         }
     })
 
