@@ -3,7 +3,7 @@ const db = require ('./db')
 require ('console.table');
 
 
-
+// View all departments
 async function viewAllDepartments() {
     const department = await db.viewAllDepartments();
     console.log('\n');
@@ -12,6 +12,7 @@ async function viewAllDepartments() {
     startApp()
    
 }
+// View all roles
 async function viewAllRoles(){
     const role = await db.viewAllRoles();
     console.log('\n');
@@ -20,6 +21,7 @@ async function viewAllRoles(){
     startApp()
 }
 
+// View all employees
 async function viewAllEmployees(){
     const employee = await db.viewAllEmployees();
     console.log('\n');
@@ -28,8 +30,9 @@ async function viewAllEmployees(){
     startApp()
 }
 
-const departmentArray = []
 
+
+// Add Department
 async function addDepartment(){
     const department = await inquirer.prompt([
     {
@@ -51,6 +54,7 @@ async function addDepartment(){
 
 }
 
+// Add role
 async function addRole(){
    const departments = await db.viewAllDepartments();
 
@@ -97,6 +101,7 @@ async function addRole(){
    startApp();
 }
 
+// Add employee
 async function addEmployee(){
     const roles = await db.viewAllRoles();
  
@@ -156,6 +161,7 @@ async function addEmployee(){
     startApp();
  }
 
+ // Update Employee
  async function updateEmployeeRole(){
     const roles = await db.viewAllRoles();
  
@@ -194,9 +200,7 @@ async function addEmployee(){
 
  }
 
-// startApp();
-// viewAllDepartments();
-
+//  This starts the application and runs through the inquier questions
 function startApp(){
     inquirer.prompt([
         {
